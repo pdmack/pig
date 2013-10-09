@@ -168,7 +168,8 @@
            input="${hadoop-core.version}"
            regexp="\d+\.(\d+)\.\d+"
            select="\1" /-->
-    <property name="hadoopversion" value="20" />
+    <property name="hadoopversion" value="23" />
+
 
     <condition property="isHadoop23">
         <equals arg1="${hadoopversion}" arg2="23"/>
@@ -595,8 +596,6 @@
     </target>
 
     <target name="forrest.check" unless="forrest.home">
-    	<fail message="'forrest.home' is not defined. 
-		Please pass -Dforrest.home=&lt;base of Apache Forrest installation&gt; to Ant on the command-line." />
     </target>
 
     <target name="source-jar" depends="cc-compile">
@@ -1722,7 +1721,9 @@
 
      <target name="ivy-resolve" depends="ivy-init" unless="ivy.resolved" description="Resolve Ivy dependencies">
               <property name="ivy.resolved" value="true"/>
+              <!--
               <ivy:resolve settingsRef="${ant.project.name}.ivy.settings"/>
+              -->
      </target>
 
      <target name="ivy-compile" depends="ivy-resolve" description="Retrieve Ivy-managed artifacts for compile configuration">

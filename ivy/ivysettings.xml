@@ -32,7 +32,8 @@
   <property name="repo.maven.org" value="${mvnrepo}" override="true"/>
   <property name="repo.jboss.org" value="http://repository.jboss.com/nexus/content/groups/public/" override="false"/>
   <property name="repo.apache.snapshots" value="http://repository.apache.org/content/groups/snapshots-group/" override="false"/>
-  <property name="repo.dir" value="${user.home}/.m2/repository" override="false"/>
+  <property name="repo.dir.share" value="/usr/share/java" override="false"/>
+  <property name="repo.dir.lib" value="/usr/lib/java" override="false"/>
   <property name="maven2.pattern" value="[organisation]/[module]/[revision]/[module]-[revision](-[classifier])"/>
   <property name="maven2.pattern.ext" value="${maven2.pattern}.[ext]"/>
   <property name="snapshot.pattern" value="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
@@ -42,30 +43,41 @@
   <include url="${ivy.default.conf.dir}/ivyconf-local.xml"/>
   <settings defaultResolver="${resolvers}"/>
   <resolvers>
-    <ibiblio name="maven2" root="${repo.maven.org}" pattern="${maven2.pattern.ext}" m2compatible="true"/>
-    <ibiblio name="jboss-maven2" root="${repo.jboss.org}" pattern="${maven2.pattern.ext}" m2compatible="true"/>
-    <ibiblio name="apache-snapshots" root="${repo.apache.snapshots}" pattern="${snapshot.pattern}"
-         checkmodified="true" changingPattern=".*SNAPSHOT" m2compatible="true"/>
-    <filesystem name="fs" m2compatible="true" checkconsistency="false" force="${force-resolve}"
-         checkmodified="true" changingPattern=".*SNAPSHOT">
-      <artifact pattern="${repo.dir}/${maven2.pattern.ext}"/>
-      <ivy pattern="${repo.dir}/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
+
+    <filesystem name="fedora1" m2compatible="false" alwaysCheckExactRevision="false">
+       <artifact pattern="${repo.dir.share}/[module](-[classifier]).[ext]"/>
     </filesystem>
+
+    <filesystem name="fedora2" m2compatible="false" alwaysCheckExactRevision="false">
+       <artifact pattern="${repo.dir.share}/[organization]/[module](-[classifier]).[ext]"/>
+    </filesystem>
+
+    <filesystem name="fedora3" m2compatible="false" alwaysCheckExactRevision="false">
+       <artifact pattern="${repo.dir.lib}/[module](-[classifier]).[ext]"/>
+    </filesystem>
+
+    <filesystem name="fedora4" m2compatible="false" alwaysCheckExactRevision="false">
+       <artifact pattern="${repo.dir.lib}/[organization]/[module](-[classifier]).[ext]"/>
+    </filesystem>
+
+    <filesystem name="build" m2compatible="false" alwaysCheckExactRevision="false">
+    </filesystem>
+
+    <filesystem name="missing" m2compatible="false" alwaysCheckExactRevision="false">
+       <artifact pattern="${user.home}/pig/lib/missing/[module]-[revision](-[classifier]).[ext]"/>
+    </filesystem>
+
     <chain name="default" dual="true">
-      <resolver ref="local"/>
-      <resolver ref="maven2"/>
-      <resolver ref="jboss-maven2"/>
-      <resolver ref="apache-snapshots"/>
+      <resolver ref="fedora1"/>
+      <resolver ref="fedora2"/>
+      <resolver ref="fedora3"/>
+      <resolver ref="fedora4"/>
+      <resolver ref="build"/>
+      <resolver ref="missing"/>
     </chain>
-    <chain name="internal">
-      <resolver ref="fs"/>
-      <resolver ref="maven2"/>
-    </chain>
-    <chain name="external">
-      <resolver ref="maven2"/>
-    </chain>
+
   </resolvers>
   <modules>
-    <module organisation="org.apache.pig" name=".*" resolver="internal"/>
+    <module organisation="org.apache.pig" name=".*" resolver="build"/>
   </modules>
 </ivysettings>

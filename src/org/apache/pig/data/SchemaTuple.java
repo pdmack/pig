@@ -36,7 +36,7 @@ import org.apache.pig.data.utils.MethodHelper.NotImplemented;
 import org.apache.pig.data.utils.SedesHelper;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.apache.pig.impl.util.ObjectSerializer;
-import org.mortbay.log.Log;
+import org.eclipse.jetty.util.log.Log;
 
 import com.google.common.collect.Lists;
 
@@ -835,7 +835,7 @@ public abstract class SchemaTuple<T extends SchemaTuple<T>> extends AbstractTupl
     protected static Schema staticSchemaGen(String s) {
         try {
             if (s.equals("")) {
-                Log.warn("No Schema present in SchemaTuple generated class");
+                Log.getLog().warn("No Schema present in SchemaTuple generated class");
                 return new Schema();
             }
             return (Schema) ObjectSerializer.deserialize(s);
